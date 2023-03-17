@@ -36,18 +36,3 @@ spec:
   selector:
     app: picalc
   type: ClusterIP
-
----
-- apiVersion: v1
-  kind: Route
-  metadata:
-    labels:
-      app: picalc
-    name: picalc
-  spec:
-    to:
-      kind: Service
-      name: picalc
-    tls:
-      termination: edge
-      insecureEdgeTerminationPolicy: Redirect
