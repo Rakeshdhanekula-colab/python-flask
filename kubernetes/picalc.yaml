@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: picalc
+  labels:
+    app: picalc
+spec:
+  selector:
+    matchLabels:
+      app: picalc
+  template:
+    metadata:
+      labels:
+        app: picalc
+    spec:
+      containers:
+      - name: picalc
+        image: __IMAGE__@__DIGEST__
+        ports:
+        - name: http-server
+          containerPort: 5000
+      imagePullSecrets:
+      - name: demo-for-the-oracle-cloud-a-robot-acc-pull-secret
+      serviceAccountName: pipeline-account
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: picalc
+  labels:
+    app: picalc
+spec:
+  ports:
+  - port: 5000
+    targetPort: 5000
+  selector:
+    app: picalc
+  type: ClusterIP
+
+---
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      app: picalc
+    name: picalc
+  spec:
+    to:
+      kind: Service
+      name: picalc
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
